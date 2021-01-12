@@ -1,41 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>React Sports Game</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>React Sports Game</title>
 </head>
+
 <body>
-    <!-- include an element for ReactDOM to attach our React-generated elements to -->
-    <div id="root"></div>
+  <!-- include an element for ReactDOM to attach our React-generated elements to -->
+  <div id="root"></div>
 
-    <!-- include React and ReactDOM -->
-    <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
-    <!-- include Babel standalone so we can process JSX in React.createElement stuff -->
-    <script crossorigin src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+  <!-- include React and ReactDOM -->
+  <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+  <!-- include Babel standalone so we can process JSX in React.createElement stuff -->
+  <script crossorigin src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 
-    <!-- include our JS+JSX for the React Appliccation -->
-<script type="text/babel">
+  <!-- include our JS+JSX for the React Appliccation -->
+  <script type="text/babel">
 
-// An App component under which all other components will be added
-function App (props) {
-  return (
-    <div>
-      <h1>Welcome to the Sports Game starter!</h1>
-      <em>This file represents the way your code should look after completing the <strong>Setup</strong> steps in the instructions.</em>
-    </div>
-  )
-}
+    // An App component under which all other components will be added
+
+    class Team extends React.Component {
+      constructor(props) {
+        super(props)
 
 
+        this.state = {
+          shots: 0,
+          score: 0
+        }
+        this.shotSound = new Audio('./assets/audio/bounces.mp3')
+        this.scoreSound = new Audio('./assets/audio/bounce+1.mp3')
+      }
 
-// Render the App
-ReactDOM.render(
-  <App />,
-  document.getElementById('root')
-)
-</script>
+      shotHandler = () => {
+        let score = this.state.score
+        this.shotSound.play()
+
+
+        if (Math.random() > 0.5) {
+          score += 1
+          this.scoreSound.play()
+
+        }
+        this.setState((state, props) => ({
+          shots: state.shots + 1,
+          score
+
+        }))
+
+      }
+
+      render() {
+        let shotpercentageDiv
+        if (this.state.shots) {
+          const shotpercentage = Math.round((this.state.score / this.state.shots) * 100)
+          shotpercentageDiv = (
+            <div>
+              <strong>Shooting %:{shotpercentage} </strong>
+            </div>
+          )
+        }
+
+        return (
+          <div className="Team">
+            <h2>{this.props.name}</h2>
+            <img src={this.props.logo} alt={this.props.name} />
+            <div>
+              <strong>Shots:</strong> {this.state.shots}
+            </div>
+
+            <div>
+              <strong>Score:</strong> {this.state.score}
+            </div>
+
+            {shotpercentageDiv}
+
+            <div>
+              <button onClick={this.shotHandler}><strong>Shoot!</strong></button>
+            </div>
+          </div>
+        )
+      }
+    }
+    function Game(props) {
+      return (
+        <div className="Game">
+          <h1>Wellcome to {props.vanue}</h1>
+          <Team
+            name="Basket Hounds"
+            logo="./assets/image.png" />
+          <Team
+            name="Jayhawks"
+            logo="./assets/image.gif" />
+        </div>
+      )
+    }
+
+    function App(props) {
+      return (
+        <div>
+          <Game vanue="Union 525 Gem" />
+
+        </div>
+
+      )
+    }
+
+    // Render the App
+    ReactDOM.render(
+      <App />,
+      document.getElementById('root')
+    )
+  </script>
 </body>
+
 </html>
