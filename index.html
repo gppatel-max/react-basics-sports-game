@@ -94,7 +94,7 @@
         this.scoreSound = new Audio('./assets/audio/bounce+1.mp3')
       }
       Shoot = (team) => {
-        const teamStatsKey = '${team}TeamStats'
+        const teamStatsKey = `${team}TeamStats`
         let score = this.state.score
         this.shotSound.play()
 
