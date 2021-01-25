@@ -23,20 +23,78 @@
 
     // An App component under which all other components will be added
 
-    class Team extends React.Component {
+    function Team(props) {
+
+      let shotpercentageDiv
+      if (props.stats.shots) {
+        const shotpercentage = Math.round((props.stats.score / props.stats.shots) * 100)
+        shotpercentageDiv = (
+          <div>
+            <strong>Shooting %:{shotpercentage} </strong>
+          </div>
+        )
+      }
+
+      return (
+        <div className="Team">
+          <h2>{props.name}</h2>
+          <img src={props.logo} alt={props.name} />
+          <div>
+            <strong>Shots:</strong> {props.stats.shots}
+          </div>
+
+          <div>
+            <strong>Score:</strong> {props.stats.score}
+          </div>
+
+          {shotpercentageDiv}
+
+          <div>
+            <button onClick={props.shotHandler}><strong>Shoot!</strong></button>
+          </div>
+        </div>
+      )
+
+    }
+
+    function ScoreBoard(props) {
+      return (
+    <div className = "ScoreBoard">
+    <div className = "TeamStats">
+      <h3>VISITORS</h3>
+      <h3>{props.visitingTeamStats.score}</h3>
+      </div>
+
+      <h3>SCOREBOARD</h3>
+      <div className = "TeamStats">
+        <h3>HOME</h3>
+        <h3>{props.homeTeamStats.score}</h3>
+        </div>
+      </div >
+
+  )
+    }
+
+    class Game extends React.Component {
       constructor(props) {
         super(props)
 
-
         this.state = {
-          shots: 0,
-          score: 0
+          resetCount: 0,
+          visitingTeamStats: {
+            shot: 0,
+            score: 0
+          },
+          homeTeamStats: {
+            shot: 0,
+            score: 0
+          }
         }
         this.shotSound = new Audio('./assets/audio/bounces.mp3')
         this.scoreSound = new Audio('./assets/audio/bounce+1.mp3')
       }
-
-      shotHandler = () => {
+      Shoot = (team) => {
+        const teamStatsKey = '${team}TeamStats'
         let score = this.state.score
         this.shotSound.play()
 
@@ -47,57 +105,62 @@
 
         }
         this.setState((state, props) => ({
-          shots: state.shots + 1,
-          score
+          [teamStatsKey]: {
+            shots: state[teamStatsKey].shots + 1,
+            score
+          }
 
         }))
 
       }
 
+      resetGame = () => {
+
+        this.setState((state, props) => ({
+          resetCount: state.resetCount + 1,
+          homeTeamStats: {
+            shots: 0,
+            score: 0
+          },
+          visitingTeamStats: {
+            shots: 0,
+            score: 0
+          }
+        }))
+
+      }
+
+
       render() {
-        let shotpercentageDiv
-        if (this.state.shots) {
-          const shotpercentage = Math.round((this.state.score / this.state.shots) * 100)
-          shotpercentageDiv = (
-            <div>
-              <strong>Shooting %:{shotpercentage} </strong>
-            </div>
-          )
-        }
-
         return (
-          <div className="Team">
-            <h2>{this.props.name}</h2>
-            <img src={this.props.logo} alt={this.props.name} />
-            <div>
-              <strong>Shots:</strong> {this.state.shots}
-            </div>
+          <div className="Game">
+            <ScoreBoard
+            visitingTeamStats = {this.state.visitingTeamStats}
+            homeTeamStats = {this.state.homeTeamStats}
+            />
 
             <div>
-              <strong>Score:</strong> {this.state.score}
+              <strong>Resets:</strong>{this.state.resetCount}
+              <button onClick={this.resetGame}>Reset Game</button>
             </div>
-
-            {shotpercentageDiv}
-
-            <div>
-              <button onClick={this.shotHandler}><strong>Shoot!</strong></button>
-            </div>
+            <h1>Wellcome to {this.props.vanue}</h1>
+            <div className = "stats">
+            <Team
+              name="Basket Hounds"
+              logo="./assets/image.png"
+              stats={this.state.homeTeamStats}
+              shotHandler={() => this.Shoot('visiting')}
+            />
+            <Team
+              name="Jayhawks"
+              logo="./assets/image.gif"
+              stats={this.state.visitingTeamStats}
+              shotHandler={() => this.Shoot('home')}
+            />
+          </div>
           </div>
         )
       }
-    }
-    function Game(props) {
-      return (
-        <div className="Game">
-          <h1>Wellcome to {props.vanue}</h1>
-          <Team
-            name="Basket Hounds"
-            logo="./assets/image.png" />
-          <Team
-            name="Jayhawks"
-            logo="./assets/image.gif" />
-        </div>
-      )
     }
 
     function App(props) {
