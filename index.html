@@ -59,20 +59,20 @@
 
     function ScoreBoard(props) {
       return (
-    <div className = "ScoreBoard">
-    <div className = "TeamStats">
-      <h3>VISITORS</h3>
-      <h3>{props.visitingTeamStats.score}</h3>
-      </div>
+        <div className="ScoreBoard">
+          <div className="TeamStats">
+            <h3>VISITORS</h3>
+            <h3>{props.visitingTeamStats.score}</h3>
+          </div>
 
-      <h3>SCOREBOARD</h3>
-      <div className = "TeamStats">
-        <h3>HOME</h3>
-        <h3>{props.homeTeamStats.score}</h3>
-        </div>
-      </div >
+          <h3>SCOREBOARD</h3>
+          <div className="TeamStats">
+            <h3>HOME</h3>
+            <h3>{props.homeTeamStats.score}</h3>
+          </div>
+        </div >
 
-  )
+      )
     }
 
     class Game extends React.Component {
@@ -82,26 +82,24 @@
         this.state = {
           resetCount: 0,
           visitingTeamStats: {
-            shot: 0,
+            shots: 0,
             score: 0
           },
           homeTeamStats: {
-            shot: 0,
+            shots: 0,
             score: 0
           }
         }
         this.shotSound = new Audio('./assets/audio/bounces.mp3')
         this.scoreSound = new Audio('./assets/audio/bounce+1.mp3')
       }
-      Shoot = (team) => {
+      shoot = (team) => {
         const teamStatsKey = `${team}TeamStats`
-        let score = this.state.score
+        let score = this.state[teamStatsKey].score
         this.shotSound.play()
-
 
         if (Math.random() > 0.5) {
           score += 1
-          this.scoreSound.play()
 
         }
         this.setState((state, props) => ({
@@ -135,8 +133,8 @@
         return (
           <div className="Game">
             <ScoreBoard
-            visitingTeamStats = {this.state.visitingTeamStats}
-            homeTeamStats = {this.state.homeTeamStats}
+              visitingTeamStats={this.state.visitingTeamStats}
+              homeTeamStats={this.state.homeTeamStats}
             />
 
             <div>
@@ -144,20 +142,20 @@
               <button onClick={this.resetGame}>Reset Game</button>
             </div>
             <h1>Wellcome to {this.props.vanue}</h1>
-            <div className = "stats">
-            <Team
-              name="Basket Hounds"
-              logo="./assets/image.png"
-              stats={this.state.homeTeamStats}
-              shotHandler={() => this.Shoot('visiting')}
-            />
-            <Team
-              name="Jayhawks"
-              logo="./assets/image.gif"
-              stats={this.state.visitingTeamStats}
-              shotHandler={() => this.Shoot('home')}
-            />
-          </div>
+            <div className="stats">
+              <Team
+                name="Basket Hounds"
+                logo="./assets/image.png"
+                stats={this.state.visitingTeamStats}
+                shotHandler={() => this.shoot('visiting')}
+              />
+              <Team
+                name="Jayhawks"
+                logo="./assets/image.gif"
+                stats={this.state.homeTeamStats}
+                shotHandler={() => this.shoot('home')}
+              />
+            </div>
           </div>
         )
       }
